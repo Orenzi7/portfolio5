@@ -82,9 +82,14 @@
   
   <style>
     /* Enhanced blur and backdrop effects */
-    .blurred {
+    .page-content {
+      transition: filter 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s ease;
+    }
+    
+    .page-content.blurred {
       filter: blur(8px) brightness(0.3);
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: scale(0.98);
+      pointer-events: none;
     }
     
     /* Glass morphism effects */
@@ -175,6 +180,11 @@
       left: 100%;
     }
     
+    .nav-link.active {
+      background: rgba(59, 130, 246, 0.3);
+      color: #60a5fa;
+    }
+    
     /* Project card enhancements */
     .project-card {
       position: relative;
@@ -199,208 +209,249 @@
     }
     
     /* Modal animations */
-    .modal-enter {
-      animation: modal-enter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    .modal-backdrop {
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
     }
     
-    .modal-exit {
-      animation: modal-exit 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    .modal-backdrop.show {
+      opacity: 1;
+      visibility: visible;
     }
     
-    @keyframes modal-enter {
-      from {
-        opacity: 0;
-        transform: scale(0.9) translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
+    .modal-content {
+      transform: scale(0.9) translateY(20px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     
-    @keyframes modal-exit {
-      from {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
-      to {
-        opacity: 0;
-        transform: scale(0.9) translateY(20px);
-      }
+    .modal-backdrop.show .modal-content {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+    
+    /* Section highlighting */
+    .section-highlight {
+      position: relative;
+    }
+    
+    .section-highlight::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      right: -20px;
+      bottom: -20px;
+      background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+      border-radius: 20px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: -1;
+    }
+    
+    .section-highlight.active::before {
+      opacity: 1;
     }
   </style>
 </head>
 <body class="bg-gray-900 text-white font-sans relative overflow-x-hidden">
-  <!-- Particle Background -->
-  <div class="particles" id="particles"></div>
-  
-  <!-- Enhanced Navigation -->
-  <nav class="fixed top-0 right-0 glass p-6 z-50 rounded-bl-xl animate-slide-in-right">
-    <ul class="space-y-3 text-sm">
-      <li><a href="#about" class="nav-link block py-2 px-4 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-300">About</a></li>
-      <li><a href="#projects" class="nav-link block py-2 px-4 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-300">Projects</a></li>
-      <li><a href="#skills" class="nav-link block py-2 px-4 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-300">Skills</a></li>
-      <li><a href="#contact" class="nav-link block py-2 px-4 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-300">Contact</a></li>
-    </ul>
-  </nav>
-
-  <!-- Enhanced Hero Section -->
-  <section id="hero" class="min-h-screen flex flex-col justify-center items-center text-center relative">
-    <h1 class="text-6xl md:text-8xl font-bold mb-6 animate-float">
-      <span class="gradient-text">Orenzi</span>
-    </h1>
-    <div id="typewriter" class="text-xl md:text-2xl mb-8 animate-glow"></div>
-    <div class="animate-bounce-subtle">
-      <svg class="w-8 h-8 text-blue-400 animate-pulse-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-      </svg>
-    </div>
-  </section>
-
-  <!-- Enhanced About Section -->
-  <section id="about" class="min-h-screen p-8 flex items-center" data-aos="fade-up" data-aos-duration="1000">
-    <div class="max-w-4xl mx-auto">
-      <h2 class="text-4xl md:text-5xl mb-6 gradient-text" data-aos="fade-right" data-aos-delay="200">About</h2>
-      <p class="text-lg md:text-xl max-w-2xl leading-relaxed" data-aos="fade-left" data-aos-delay="400">
-        A passionate developer who blends creativity with logic. I create immersive digital experiences that captivate and inspire. Every pixel has purpose, every interaction tells a story.
-      </p>
-      <div class="mt-8 flex flex-wrap gap-4" data-aos="fade-up" data-aos-delay="600">
-        <span class="px-4 py-2 glass rounded-full text-sm hover-lift cursor-pointer">Creative</span>
-        <span class="px-4 py-2 glass rounded-full text-sm hover-lift cursor-pointer">Innovative</span>
-        <span class="px-4 py-2 glass rounded-full text-sm hover-lift cursor-pointer">Detail-Oriented</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- Enhanced Projects Section -->
-  <section id="projects" class="min-h-screen p-8" data-aos="zoom-in" data-aos-duration="1200">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="text-4xl md:text-5xl mb-8 text-center gradient-text">Projects</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="project-card glass p-6 rounded-xl hover-lift cursor-pointer" onclick="showPopup('project1')" data-aos="fade-up" data-aos-delay="100">
-          <div class="w-full h-48 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg mb-4 flex items-center justify-center">
-            <span class="text-2xl">🚀</span>
-          </div>
-          <h3 class="text-xl font-bold mb-2">Project Alpha</h3>
-          <p class="text-gray-300 text-sm">Innovative web application with cutting-edge features</p>
-        </div>
-        
-        <div class="project-card glass p-6 rounded-xl hover-lift cursor-pointer" onclick="showPopup('project2')" data-aos="fade-up" data-aos-delay="200">
-          <div class="w-full h-48 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg mb-4 flex items-center justify-center">
-            <span class="text-2xl">✨</span>
-          </div>
-          <h3 class="text-xl font-bold mb-2">Project Beta</h3>
-          <p class="text-gray-300 text-sm">Beautiful UI/UX design with smooth animations</p>
-        </div>
-        
-        <div class="project-card glass p-6 rounded-xl hover-lift cursor-pointer" onclick="showPopup('project1')" data-aos="fade-up" data-aos-delay="300">
-          <div class="w-full h-48 bg-gradient-to-br from-pink-500 to-yellow-600 rounded-lg mb-4 flex items-center justify-center">
-            <span class="text-2xl">🎨</span>
-          </div>
-          <h3 class="text-xl font-bold mb-2">Project Gamma</h3>
-          <p class="text-gray-300 text-sm">Creative digital experience with immersive interactions</p>
-        </div>
-      </div>
-    </div>
+  <!-- Main Page Content Wrapper -->
+  <div id="pageContent" class="page-content">
+    <!-- Particle Background -->
+    <div class="particles" id="particles"></div>
     
-    <!-- Enhanced Project Modals -->
-    <div id="project1" class="hidden fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-50 p-4">
-      <div class="glass w-full max-w-4xl h-3/4 rounded-xl overflow-hidden modal-enter">
-        <div class="p-6 border-b border-white border-opacity-20">
-          <h3 class="text-2xl font-bold">Project Details</h3>
-          <button onclick="closePopup('project1')" class="absolute top-6 right-6 w-10 h-10 glass rounded-full flex items-center justify-center hover:bg-white hover:bg-opacity-20 transition-all duration-200">✕</button>
-        </div>
-        <iframe src="https://weatherappbegining.netlify.app/" class="w-full h-full"></iframe>
-      </div>
-    </div>
-    
-    <div id="project2" class="hidden fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-50 p-4">
-      <div class="glass w-full max-w-4xl h-3/4 rounded-xl overflow-hidden modal-enter">
-        <div class="p-6 border-b border-white border-opacity-20">
-          <h3 class="text-2xl font-bold">Project Details</h3>
-          <button onclick="closePopup('project2')" class="absolute top-6 right-6 w-10 h-10 glass rounded-full flex items-center justify-center hover:bg-white hover:bg-opacity-20 transition-all duration-200">✕</button>
-        </div>
-        <iframe src="https://example.com" class="w-full h-full"></iframe>
-      </div>
-    </div>
-  </section>
+    <!-- Enhanced Navigation -->
+    <nav class="fixed top-0 right-0 glass p-6 z-40 rounded-bl-xl animate-slide-in-right">
+      <ul class="space-y-3 text-sm">
+        <li><a href="#hero" class="nav-link block py-2 px-4 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-300" data-section="hero">Home</a></li>
+        <li><a href="#about" class="nav-link block py-2 px-4 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-300" data-section="about">About</a></li>
+        <li><a href="#projects" class="nav-link block py-2 px-4 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-300" data-section="projects">Projects</a></li>
+        <li><a href="#skills" class="nav-link block py-2 px-4 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-300" data-section="skills">Skills</a></li>
+        <li><a href="#contact" class="nav-link block py-2 px-4 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-300" data-section="contact">Contact</a></li>
+      </ul>
+    </nav>
 
-  <!-- Enhanced Skills Section -->
-  <section id="skills" class="min-h-screen p-8 flex items-center" data-aos="fade-up" data-aos-duration="1000">
-    <div class="max-w-4xl mx-auto w-full">
-      <h2 class="text-4xl md:text-5xl mb-8 text-center gradient-text">Skills</h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="skill-item glass p-6 rounded-xl hover-lift cursor-pointer" onclick="showSkillPopup('HTML')" data-aos="fade-up" data-aos-delay="100">
-          <div class="text-4xl mb-4">🌐</div>
-          <h3 class="text-xl font-bold mb-2">HTML5</h3>
-          <div class="w-full bg-gray-700 rounded-full h-2">
-            <div class="bg-gradient-to-r from-orange-400 to-red-500 h-2 rounded-full w-5/6 animate-pulse-slow"></div>
-          </div>
-        </div>
-        
-        <div class="skill-item glass p-6 rounded-xl hover-lift cursor-pointer" onclick="showSkillPopup('CSS')" data-aos="fade-up" data-aos-delay="200">
-          <div class="text-4xl mb-4">🎨</div>
-          <h3 class="text-xl font-bold mb-2">CSS3</h3>
-          <div class="w-full bg-gray-700 rounded-full h-2">
-            <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full w-5/6 animate-pulse-slow"></div>
-          </div>
-        </div>
-        
-        <div class="skill-item glass p-6 rounded-xl hover-lift cursor-pointer" onclick="showSkillPopup('JavaScript')" data-aos="fade-up" data-aos-delay="300">
-          <div class="text-4xl mb-4">⚡</div>
-          <h3 class="text-xl font-bold mb-2">JavaScript</h3>
-          <div class="w-full bg-gray-700 rounded-full h-2">
-            <div class="bg-gradient-to-r from-yellow-400 to-yellow-600 h-2 rounded-full w-4/5 animate-pulse-slow"></div>
-          </div>
+    <!-- Enhanced Hero Section -->
+    <section id="hero" class="min-h-screen flex flex-col justify-center items-center text-center relative section-highlight">
+      <h1 class="text-6xl md:text-8xl font-bold mb-6 animate-float">
+        <span class="gradient-text">Orenzi</span>
+      </h1>
+      <div id="typewriter" class="text-xl md:text-2xl mb-8 animate-glow"></div>
+      <div class="animate-bounce-subtle">
+        <svg class="w-8 h-8 text-blue-400 animate-pulse-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Enhanced About Section -->
+    <section id="about" class="min-h-screen p-8 flex items-center section-highlight" data-aos="fade-up" data-aos-duration="1000">
+      <div class="max-w-4xl mx-auto">
+        <h2 class="text-4xl md:text-5xl mb-6 gradient-text" data-aos="fade-right" data-aos-delay="200">About</h2>
+        <p class="text-lg md:text-xl max-w-2xl leading-relaxed" data-aos="fade-left" data-aos-delay="400">
+          A passionate developer who blends creativity with logic. I create immersive digital experiences that captivate and inspire. Every pixel has purpose, every interaction tells a story.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-4" data-aos="fade-up" data-aos-delay="600">
+          <span class="px-4 py-2 glass rounded-full text-sm hover-lift cursor-pointer">Creative</span>
+          <span class="px-4 py-2 glass rounded-full text-sm hover-lift cursor-pointer">Innovative</span>
+          <span class="px-4 py-2 glass rounded-full text-sm hover-lift cursor-pointer">Detail-Oriented</span>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Enhanced Contact Section -->
-  <section id="contact" class="min-h-screen p-8 flex items-center" data-aos="fade-up" data-aos-duration="1000">
-    <div class="max-w-4xl mx-auto w-full text-center">
-      <h2 class="text-4xl md:text-5xl mb-8 gradient-text">Let's Connect</h2>
-      <p class="text-lg mb-8 text-gray-300">Ready to bring your ideas to life? Let's create something amazing together.</p>
-      <button onclick="openContactForm()" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
-        Get In Touch
-      </button>
-    </div>
-    
-    <!-- Enhanced Contact Modal -->
-    <div id="contactForm" class="hidden fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-50 p-4">
-      <div class="glass w-full max-w-md rounded-xl overflow-hidden modal-enter">
-        <div class="p-6">
-          <h3 class="text-2xl font-bold mb-6 text-center gradient-text">Send Message</h3>
-          <form class="space-y-4">
-            <input type="text" placeholder="Your Name" class="w-full p-4 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
-            <input type="email" placeholder="Your Email" class="w-full p-4 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
-            <textarea placeholder="Your Message" rows="4" class="w-full p-4 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 resize-none"></textarea>
-            <div class="flex gap-4">
-              <button type="submit" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105">Send</button>
-              <button type="button" onclick="closeContactForm()" class="flex-1 glass py-3 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-200">Cancel</button>
+    <!-- Enhanced Projects Section -->
+    <section id="projects" class="min-h-screen p-8 section-highlight" data-aos="zoom-in" data-aos-duration="1200">
+      <div class="max-w-6xl mx-auto">
+        <h2 class="text-4xl md:text-5xl mb-8 text-center gradient-text">Projects</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="project-card glass p-6 rounded-xl hover-lift cursor-pointer" onclick="showPopup('project1')" data-aos="fade-up" data-aos-delay="100">
+            <div class="w-full h-48 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg mb-4 flex items-center justify-center">
+              <span class="text-2xl">🚀</span>
             </div>
-          </form>
+            <h3 class="text-xl font-bold mb-2">Weather App</h3>
+            <p class="text-gray-300 text-sm">Modern weather application with real-time data and beautiful UI</p>
+          </div>
+          
+          <div class="project-card glass p-6 rounded-xl hover-lift cursor-pointer" onclick="showPopup('project2')" data-aos="fade-up" data-aos-delay="200">
+            <div class="w-full h-48 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg mb-4 flex items-center justify-center">
+              <span class="text-2xl">✨</span>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Project Beta</h3>
+            <p class="text-gray-300 text-sm">Beautiful UI/UX design with smooth animations and interactions</p>
+          </div>
+          
+          <div class="project-card glass p-6 rounded-xl hover-lift cursor-pointer" onclick="showPopup('project3')" data-aos="fade-up" data-aos-delay="300">
+            <div class="w-full h-48 bg-gradient-to-br from-pink-500 to-yellow-600 rounded-lg mb-4 flex items-center justify-center">
+              <span class="text-2xl">🎨</span>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Project Gamma</h3>
+            <p class="text-gray-300 text-sm">Creative digital experience with immersive interactions</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Enhanced Skills Section -->
+    <section id="skills" class="min-h-screen p-8 flex items-center section-highlight" data-aos="fade-up" data-aos-duration="1000">
+      <div class="max-w-4xl mx-auto w-full">
+        <h2 class="text-4xl md:text-5xl mb-8 text-center gradient-text">Skills</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="skill-item glass p-6 rounded-xl hover-lift cursor-pointer" onclick="showSkillPopup('HTML5')" data-aos="fade-up" data-aos-delay="100">
+            <div class="text-4xl mb-4">🌐</div>
+            <h3 class="text-xl font-bold mb-2">HTML5</h3>
+            <div class="w-full bg-gray-700 rounded-full h-2">
+              <div class="bg-gradient-to-r from-orange-400 to-red-500 h-2 rounded-full w-5/6 animate-pulse-slow"></div>
+            </div>
+          </div>
+          
+          <div class="skill-item glass p-6 rounded-xl hover-lift cursor-pointer" onclick="showSkillPopup('CSS3')" data-aos="fade-up" data-aos-delay="200">
+            <div class="text-4xl mb-4">🎨</div>
+            <h3 class="text-xl font-bold mb-2">CSS3</h3>
+            <div class="w-full bg-gray-700 rounded-full h-2">
+              <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-2 rounded-full w-5/6 animate-pulse-slow"></div>
+            </div>
+          </div>
+          
+          <div class="skill-item glass p-6 rounded-xl hover-lift cursor-pointer" onclick="showSkillPopup('JavaScript')" data-aos="fade-up" data-aos-delay="300">
+            <div class="text-4xl mb-4">⚡</div>
+            <h3 class="text-xl font-bold mb-2">JavaScript</h3>
+            <div class="w-full bg-gray-700 rounded-full h-2">
+              <div class="bg-gradient-to-r from-yellow-400 to-yellow-600 h-2 rounded-full w-4/5 animate-pulse-slow"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Enhanced Contact Section -->
+    <section id="contact" class="min-h-screen p-8 flex items-center section-highlight" data-aos="fade-up" data-aos-duration="1000">
+      <div class="max-w-4xl mx-auto w-full text-center">
+        <h2 class="text-4xl md:text-5xl mb-8 gradient-text">Let's Connect</h2>
+        <p class="text-lg mb-8 text-gray-300">Ready to bring your ideas to life? Let's create something amazing together.</p>
+        <button onclick="openContactForm()" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+          Get In Touch
+        </button>
+      </div>
+    </section>
+
+    <!-- Enhanced Footer -->
+    <footer class="p-8 text-center border-t border-white border-opacity-10">
+      <p class="mb-4 text-gray-400">Connect with me</p>
+      <div class="flex justify-center space-x-6">
+        <a href="#" class="glass p-3 rounded-full hover-lift transition-all duration-300 group">
+          <span class="text-lg group-hover:scale-110 transform transition-transform duration-200">💬</span>
+        </a>
+        <a href="#" class="glass p-3 rounded-full hover-lift transition-all duration-300 group">
+          <span class="text-lg group-hover:scale-110 transform transition-transform duration-200">📸</span>
+        </a>
+        <a href="#" class="glass p-3 rounded-full hover-lift transition-all duration-300 group">
+          <span class="text-lg group-hover:scale-110 transform transition-transform duration-200">💼</span>
+        </a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Enhanced Project Modals -->
+  <div id="project1" class="modal-backdrop fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-50 p-4">
+    <div class="modal-content glass w-full max-w-4xl h-3/4 rounded-xl overflow-hidden">
+      <div class="p-6 border-b border-white border-opacity-20 flex justify-between items-center">
+        <h3 class="text-2xl font-bold">Weather App Project</h3>
+        <button onclick="closePopup('project1')" class="w-10 h-10 glass rounded-full flex items-center justify-center hover:bg-white hover:bg-opacity-20 transition-all duration-200">✕</button>
+      </div>
+      <iframe src="https://weatherappbegining.netlify.app/" class="w-full h-full border-none"></iframe>
+    </div>
+  </div>
+  
+  <div id="project2" class="modal-backdrop fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-50 p-4">
+    <div class="modal-content glass w-full max-w-4xl h-3/4 rounded-xl overflow-hidden">
+      <div class="p-6 border-b border-white border-opacity-20 flex justify-between items-center">
+        <h3 class="text-2xl font-bold">Project Beta Details</h3>
+        <button onclick="closePopup('project2')" class="w-10 h-10 glass rounded-full flex items-center justify-center hover:bg-white hover:bg-opacity-20 transition-all duration-200">✕</button>
+      </div>
+      <div class="p-6 h-full overflow-auto">
+        <div class="text-center py-20">
+          <div class="text-6xl mb-6">✨</div>
+          <h4 class="text-2xl mb-4 gradient-text">Coming Soon</h4>
+          <p class="text-gray-300">This project is currently in development. Stay tuned for updates!</p>
         </div>
       </div>
     </div>
-  </section>
-
-  <!-- Enhanced Footer -->
-  <footer class="p-8 text-center border-t border-white border-opacity-10">
-    <p class="mb-4 text-gray-400">Connect with me</p>
-    <div class="flex justify-center space-x-6">
-      <a href="#" class="glass p-3 rounded-full hover-lift transition-all duration-300 group">
-        <span class="text-lg group-hover:scale-110 transform transition-transform duration-200">💬</span>
-      </a>
-      <a href="#" class="glass p-3 rounded-full hover-lift transition-all duration-300 group">
-        <span class="text-lg group-hover:scale-110 transform transition-transform duration-200">📸</span>
-      </a>
-      <a href="#" class="glass p-3 rounded-full hover-lift transition-all duration-300 group">
-        <span class="text-lg group-hover:scale-110 transform transition-transform duration-200">💼</span>
-      </a>
+  </div>
+  
+  <div id="project3" class="modal-backdrop fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-50 p-4">
+    <div class="modal-content glass w-full max-w-4xl h-3/4 rounded-xl overflow-hidden">
+      <div class="p-6 border-b border-white border-opacity-20 flex justify-between items-center">
+        <h3 class="text-2xl font-bold">Project Gamma Details</h3>
+        <button onclick="closePopup('project3')" class="w-10 h-10 glass rounded-full flex items-center justify-center hover:bg-white hover:bg-opacity-20 transition-all duration-200">✕</button>
+      </div>
+      <div class="p-6 h-full overflow-auto">
+        <div class="text-center py-20">
+          <div class="text-6xl mb-6">🎨</div>
+          <h4 class="text-2xl mb-4 gradient-text">Creative Experience</h4>
+          <p class="text-gray-300">An immersive digital art piece showcasing modern web technologies and creative interactions.</p>
+        </div>
+      </div>
     </div>
-  </footer>
+  </div>
+
+  <!-- Enhanced Contact Modal -->
+  <div id="contactForm" class="modal-backdrop fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-50 p-4">
+    <div class="modal-content glass w-full max-w-md rounded-xl overflow-hidden">
+      <div class="p-6">
+        <h3 class="text-2xl font-bold mb-6 text-center gradient-text">Send Message</h3>
+        <form class="space-y-4">
+          <input type="text" placeholder="Your Name" class="w-full p-4 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+          <input type="email" placeholder="Your Email" class="w-full p-4 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200">
+          <textarea placeholder="Your Message" rows="4" class="w-full p-4 bg-white bg-opacity-10 border border-white border-opacity-20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200 resize-none"></textarea>
+          <div class="flex gap-4">
+            <button type="submit" class="flex-1 bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 transform hover:scale-105">Send</button>
+            <button type="button" onclick="closeContactForm()" class="flex-1 glass py-3 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-200">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <!-- AOS Script -->
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
@@ -447,83 +498,133 @@
       }
     }
 
-    // Enhanced popup functions
+    // Enhanced popup functions with proper blur control
     function showPopup(id) {
       const popup = document.getElementById(id);
-      popup.classList.remove('hidden');
-      document.body.classList.add('blurred');
+      const pageContent = document.getElementById('pageContent');
       
-      // Add entrance animation
-      const content = popup.querySelector('.modal-enter');
-      content.style.animation = 'modal-enter 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+      popup.classList.add('show');
+      pageContent.classList.add('blurred');
+      
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
     }
 
     function closePopup(id) {
       const popup = document.getElementById(id);
-      const content = popup.querySelector('.modal-enter');
+      const pageContent = document.getElementById('pageContent');
       
-      // Add exit animation
-      content.style.animation = 'modal-exit 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
+      popup.classList.remove('show');
+      pageContent.classList.remove('blurred');
       
-      setTimeout(() => {
-        popup.classList.add('hidden');
-        document.body.classList.remove('blurred');
-      }, 200);
+      // Restore body scroll
+      document.body.style.overflow = 'auto';
     }
 
     // Enhanced contact form functions
     function openContactForm() {
       const form = document.getElementById('contactForm');
-      form.classList.remove('hidden');
-      document.body.classList.add('blurred');
+      const pageContent = document.getElementById('pageContent');
+      
+      form.classList.add('show');
+      pageContent.classList.add('blurred');
+      document.body.style.overflow = 'hidden';
     }
 
     function closeContactForm() {
       const form = document.getElementById('contactForm');
-      const content = form.querySelector('.modal-enter');
+      const pageContent = document.getElementById('pageContent');
       
-      content.style.animation = 'modal-exit 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
-      
-      setTimeout(() => {
-        form.classList.add('hidden');
-        document.body.classList.remove('blurred');
-      }, 200);
+      form.classList.remove('show');
+      pageContent.classList.remove('blurred');
+      document.body.style.overflow = 'auto';
     }
 
-    // Skill popup function
+    // Enhanced skill popup function
     function showSkillPopup(skill) {
+      const pageContent = document.getElementById('pageContent');
+      
       // Create dynamic popup
       const popup = document.createElement('div');
-      popup.className = 'fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 p-4';
+      popup.className = 'modal-backdrop fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50 p-4 show';
       popup.innerHTML = `
-        <div class="glass max-w-md w-full p-6 rounded-xl modal-enter">
+        <div class="modal-content glass max-w-md w-full p-6 rounded-xl">
           <h3 class="text-2xl font-bold mb-4 gradient-text">${skill}</h3>
           <p class="text-gray-300 mb-6">Expert level proficiency in ${skill} with years of hands-on experience building modern, responsive applications.</p>
-          <button onclick="this.parentElement.parentElement.remove(); document.body.classList.remove('blurred')" class="w-full glass py-3 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-200">Close</button>
+          <button onclick="closeSkillPopup(this)" class="w-full glass py-3 rounded-lg hover:bg-white hover:bg-opacity-10 transition-all duration-200">Close</button>
         </div>
       `;
       
       document.body.appendChild(popup);
-      document.body.classList.add('blurred');
+      pageContent.classList.add('blurred');
+      document.body.style.overflow = 'hidden';
       
       // Auto remove after 5 seconds
       setTimeout(() => {
         if (document.body.contains(popup)) {
-          popup.remove();
-          document.body.classList.remove('blurred');
+          closeSkillPopup(popup.querySelector('button'));
         }
       }, 5000);
     }
 
-    // Smooth scroll enhancement
+    function closeSkillPopup(button) {
+      const popup = button.closest('.modal-backdrop');
+      const pageContent = document.getElementById('pageContent');
+      
+      popup.classList.remove('show');
+      pageContent.classList.remove('blurred');
+      document.body.style.overflow = 'auto';
+      
+      setTimeout(() => {
+        if (document.body.contains(popup)) {
+          popup.remove();
+        }
+      }, 300);
+    }
+
+    // Enhanced navigation with active states and smooth scrolling
+    function updateActiveNavigation() {
+      const sections = document.querySelectorAll('section[id]');
+      const navLinks = document.querySelectorAll('.nav-link');
+      const currentPosition = window.pageYOffset + 100;
+
+      // Remove all active states first
+      sections.forEach(section => section.classList.remove('active'));
+      navLinks.forEach(link => link.classList.remove('active'));
+
+      // Find the current section
+      let currentSection = null;
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionBottom = sectionTop + section.offsetHeight;
+        
+        if (currentPosition >= sectionTop && currentPosition < sectionBottom) {
+          currentSection = section;
+        }
+      });
+
+      // Update active states
+      if (currentSection) {
+        currentSection.classList.add('active');
+        const activeNavLink = document.querySelector(`[data-section="${currentSection.id}"]`);
+        if (activeNavLink) {
+          activeNavLink.classList.add('active');
+        }
+      }
+    }
+
+    // Smooth scroll enhancement with proper navigation handling
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
+        const targetId = this.getAttribute('href').substring(1);
+        const target = document.getElementById(targetId);
+        
         if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
+          const offsetTop = target.offsetTop - 50;
+          window.scrollTo({
+            top: offsetTop,
+            behavior: 'smooth'
           });
         }
       });
@@ -532,31 +633,177 @@
     // Initialize on page load
     document.addEventListener('DOMContentLoaded', function() {
       createParticles();
+      updateActiveNavigation();
       
-      // Add scroll-based animations
+      // Add scroll-based animations and navigation updates
+      let scrollTimeout;
       window.addEventListener('scroll', () => {
-        const scrolled = window.pageYOffset;
-        const parallax = scrolled * 0.5;
+        // Clear previous timeout
+        clearTimeout(scrollTimeout);
         
-        // Parallax effect for hero section
-        const hero = document.getElementById('hero');
-        if (hero) {
-          hero.style.transform = `translateY(${parallax}px)`;
+        // Throttle the scroll events
+        scrollTimeout = setTimeout(() => {
+          updateActiveNavigation();
+          
+          const scrolled = window.pageYOffset;
+          const parallax = scrolled * 0.3;
+          
+          // Parallax effect for hero section
+          const hero = document.getElementById('hero');
+          if (hero && scrolled < window.innerHeight) {
+            hero.style.transform = `translateY(${parallax}px)`;
+          }
+        }, 10);
+      });
+    });
+
+    // Keyboard navigation and accessibility
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        // Close any open modals
+        const modals = document.querySelectorAll('.modal-backdrop.show');
+        modals.forEach(modal => {
+          if (modal.id === 'contactForm') {
+            closeContactForm();
+          } else if (modal.id.startsWith('project')) {
+            closePopup(modal.id);
+          } else {
+            // Handle skill popups
+            const closeButton = modal.querySelector('button');
+            if (closeButton) {
+              closeSkillPopup(closeButton);
+            }
+          }
+        });
+      }
+    });
+
+    // Click outside to close modals
+    document.addEventListener('click', function(e) {
+      const modals = document.querySelectorAll('.modal-backdrop.show');
+      modals.forEach(modal => {
+        if (e.target === modal) {
+          if (modal.id === 'contactForm') {
+            closeContactForm();
+          } else if (modal.id.startsWith('project')) {
+            closePopup(modal.id);
+          } else {
+            // Handle skill popups
+            const closeButton = modal.querySelector('button');
+            if (closeButton) {
+              closeSkillPopup(closeButton);
+            }
+          }
         }
       });
     });
 
-    // Keyboard navigation
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        // Close any open modals
-        document.querySelectorAll('.fixed').forEach(modal => {
-          if (!modal.classList.contains('hidden')) {
-            modal.classList.add('hidden');
-            document.body.classList.remove('blurred');
-          }
-        });
+    // Enhanced form handling
+    document.getElementById('contactForm').querySelector('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      // Simple form validation
+      const inputs = this.querySelectorAll('input, textarea');
+      let isValid = true;
+      
+      inputs.forEach(input => {
+        if (!input.value.trim()) {
+          isValid = false;
+          input.style.borderColor = '#ef4444';
+          input.addEventListener('input', function() {
+            this.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+          }, { once: true });
+        }
+      });
+      
+      if (isValid) {
+        // Simulate form submission
+        const submitButton = this.querySelector('button[type="submit"]');
+        const originalText = submitButton.textContent;
+        
+        submitButton.textContent = 'Sending...';
+        submitButton.disabled = true;
+        
+        setTimeout(() => {
+          submitButton.textContent = 'Sent! ✓';
+          setTimeout(() => {
+            closeContactForm();
+            this.reset();
+            submitButton.textContent = originalText;
+            submitButton.disabled = false;
+          }, 1000);
+        }, 2000);
       }
+    });
+
+    // Add touch support for mobile devices
+    let touchStartY = 0;
+    let touchEndY = 0;
+
+    document.addEventListener('touchstart', function(e) {
+      touchStartY = e.changedTouches[0].screenY;
+    });
+
+    document.addEventListener('touchend', function(e) {
+      touchEndY = e.changedTouches[0].screenY;
+      handleSwipe();
+    });
+
+    function handleSwipe() {
+      const swipeThreshold = 50;
+      const diff = touchStartY - touchEndY;
+      
+      if (Math.abs(diff) > swipeThreshold) {
+        const sections = Array.from(document.querySelectorAll('section[id]'));
+        const currentSection = sections.find(section => 
+          section.classList.contains('active')
+        );
+        
+        if (currentSection) {
+          const currentIndex = sections.indexOf(currentSection);
+          let targetIndex;
+          
+          if (diff > 0 && currentIndex < sections.length - 1) {
+            // Swipe up - next section
+            targetIndex = currentIndex + 1;
+          } else if (diff < 0 && currentIndex > 0) {
+            // Swipe down - previous section
+            targetIndex = currentIndex - 1;
+          }
+          
+          if (targetIndex !== undefined) {
+            const targetSection = sections[targetIndex];
+            const offsetTop = targetSection.offsetTop - 50;
+            window.scrollTo({
+              top: offsetTop,
+              behavior: 'smooth'
+            });
+          }
+        }
+      }
+    }
+
+    // Performance optimization: Intersection Observer for animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    // Observe elements for scroll animations
+    document.querySelectorAll('.project-card, .skill-item').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(el);
     });
   </script>
 </body>
